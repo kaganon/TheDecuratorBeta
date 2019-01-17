@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:padding="16dp"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="Enter the project name: "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/edit_project_name"
+        android:hint="Living Room "
+        android:layout_width="match_parent"
+        android:gravity="fill_horizontal"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="Enter your budget: "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/edit_project_budget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="fill_horizontal"
+        android:inputType="numberDecimal"
+        android:hint="$1000.00"
+     />
+
+
+</LinearLayout>
