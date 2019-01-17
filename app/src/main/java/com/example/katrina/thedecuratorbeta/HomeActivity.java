@@ -49,6 +49,9 @@ import static com.pinterest.android.pdk.Utils.log;
 
 public class HomeActivity extends AppCompatActivity implements ProjectDialog.ProjectDialogListener {
 
+    private static final String TAG = "HomeActivity";
+
+
     // boards:
     private ImageView boardImage;
     private PDKCallback myBoardsCallback;
@@ -72,18 +75,19 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
     private Button button;
 
     private DatabaseReference projectReference;
-    private DatabaseReference userReference;
+
     private RecyclerView recyclerView;
     private ArrayList<Project> projectList;
     private ProjectFbAdapter projectFbAdapter;
+
+    private DatabaseReference userReference;
+    private boolean existingUser = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-
 
 
         projectName = (TextView) findViewById(R.id.project_name);
@@ -180,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(HomeActivity.this,
-                        "Ooops, something went wrong", Toast.LENGTH_SHORT).show();
+                        "Ooops, something went wrong:" + databaseError, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -191,14 +195,10 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
             @Override
             public void onSuccess(PDKResponse response) {
                 if (DEBUG) log(String.format("Status: %d", response.getStatusCode()));
-                userReference = FirebaseDatabase.getInstance().getReference("User");
                 user = response.getUser();
 
-                String userId = user.getUid();
-                User pinterestUser = new User(userId);
-                userReference.child(userId).setValue(pinterestUser);
-
                 setUser();
+                getLoggedInUser();
                 getProjects();
 
             }
@@ -211,6 +211,51 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
             }
         });
     }
+
+
+    private void getLoggedInUser() {
+        final String userId = user.getUid();
+
+        userReference = FirebaseDatabase.getInstance().getReference()
+                .child("User");
+
+
+        userReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Log.d(TAG, "ds-userID:" + userId);
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getKey().equals(userId)) {
+                        existingUser = true;
+                    }
+
+                    Log.d(TAG, "ds-key:" + ds.getKey());
+                    Log.d(TAG, "ds-userID - inside loop:" + userId);
+                    Log.d(TAG, "ds-value User class:" + ds.getValue());
+                    Log.d(TAG, "ds-value User class userId:" + ds.getValue(User.class).getUserId());
+                    Log.d(TAG, "ds-children" + dataSnapshot.getChildren().toString());
+                    Log.d(TAG, "ds-Existing User - in loop:" + existingUser);
+                }
+
+                Log.d(TAG, "ds-Existing User - outside loop:" + existingUser);
+
+                if (existingUser == false) {
+                    Log.d(TAG, "I am inside the false existing user");
+                    User pinterestUser = new User(userId);
+                    userReference.child(userId).setValue(pinterestUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(HomeActivity.this,
+                        "Ooops, something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     private void initializeDisplayProject() {
         final RecyclerView recyclerProjects = (RecyclerView) findViewById(R.id.list_projects);

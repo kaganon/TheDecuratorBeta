@@ -1,16 +1,24 @@
 package com.example.katrina.thedecuratorbeta;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pinterest.android.pdk.PDKCallback;
 import com.pinterest.android.pdk.PDKClient;
 import com.pinterest.android.pdk.PDKException;
 import com.pinterest.android.pdk.PDKResponse;
+import com.pinterest.android.pdk.PDKUser;
 
 
 import java.util.ArrayList;
@@ -76,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
+
 
     private void onLoginSuccess() {
         Intent intent = new Intent(this, HomeActivity.class);
