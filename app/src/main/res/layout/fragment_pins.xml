@@ -29,6 +29,7 @@
                 />
 
             <TextView
+                android:id="@+id/pin_title"
                 android:layout_below="@+id/pin_img"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"

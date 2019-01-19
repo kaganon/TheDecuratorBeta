@@ -92,6 +92,9 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        userName = (TextView) findViewById(R.id.user_name);
+        profileImage = (ImageView) findViewById(R.id.profile_img);
+
 
         projectName = (TextView) findViewById(R.id.project_name);
         projectBudget = (TextView) findViewById(R.id.project_budget);
@@ -121,9 +124,6 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
 
         _gridView.setAdapter(_boardsAdapter);
 
-
-        userName = (TextView) findViewById(R.id.user_name);
-        profileImage = (ImageView) findViewById(R.id.profile_img);
 
         myBoardsCallback = new PDKCallback() {
             @Override

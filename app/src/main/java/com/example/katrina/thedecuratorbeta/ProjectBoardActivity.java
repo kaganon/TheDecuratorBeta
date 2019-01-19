@@ -5,7 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.pinterest.android.pdk.PDKCallback;
+import com.pinterest.android.pdk.PDKResponse;
+
 public class ProjectBoardActivity extends AppCompatActivity {
+
+    private PDKCallback myPinsCallback;
+    private PDKResponse myPinsResponse;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,5 +30,9 @@ public class ProjectBoardActivity extends AppCompatActivity {
 
         projectTitle.setText(title);
         projectBudget.setText(budget);
+    }
+
+    private void getPins() {
+
     }
 }
