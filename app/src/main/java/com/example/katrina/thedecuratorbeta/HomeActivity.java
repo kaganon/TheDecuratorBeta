@@ -2,6 +2,7 @@ package com.example.katrina.thedecuratorbeta;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +48,7 @@ import java.util.List;
 
 import static com.pinterest.android.pdk.Utils.log;
 
-public class HomeActivity extends AppCompatActivity implements ProjectDialog.ProjectDialogListener {
+public class HomeActivity extends AppCompatActivity implements ProjectDialog.ProjectDialogListener, ProjectFbAdapter.OnProjectListener {
 
     private static final String TAG = "HomeActivity";
 
@@ -79,6 +80,8 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
     private RecyclerView recyclerView;
     private ArrayList<Project> projectList;
     private ProjectFbAdapter projectFbAdapter;
+
+
 
     private DatabaseReference userReference;
     private boolean existingUser = false;
@@ -172,12 +175,13 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 projectList = new ArrayList<Project>();
+
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     Project p = dataSnapshot1.getValue(Project.class);
                     projectList.add(p);
                 }
 
-                projectFbAdapter = new ProjectFbAdapter(HomeActivity.this, projectList);
+                projectFbAdapter = new ProjectFbAdapter(HomeActivity.this, projectList, HomeActivity.this);
                 recyclerView.setAdapter(projectFbAdapter);
             }
 
@@ -280,6 +284,17 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
     protected void onResume() {
         super.onResume();
 //        fetchBoards();
+    }
+
+    @Override
+    public void onProjectClick(int position) {
+        // NAVIGATE TO THE NEW ACTIVITY
+        Log.d(TAG, "onProjectClick: CLICKED!");
+        Intent intent = new Intent(this, ProjectBoardActivity.class);
+        intent.putExtra("Project", projectList.get(position));
+        startActivity(intent);
+
+
     }
 
     private class BoardsAdapter extends BaseAdapter {
