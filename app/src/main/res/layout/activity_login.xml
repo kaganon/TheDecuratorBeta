@@ -9,9 +9,10 @@
 
     <Button
         android:id="@+id/login_button"
-        android:text="Login with Pinterest"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:elevation="25dp"
+        android:text="Login with Pinterest" />
 
 
 
