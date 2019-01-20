@@ -82,7 +82,6 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
     private ProjectFbAdapter projectFbAdapter;
 
 
-
     private DatabaseReference userReference;
     private boolean existingUser = false;
 
@@ -92,14 +91,17 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Set User Name Information
         userName = (TextView) findViewById(R.id.user_name);
         profileImage = (ImageView) findViewById(R.id.profile_img);
 
 
+        // This is just for testing
         projectName = (TextView) findViewById(R.id.project_name);
         projectBudget = (TextView) findViewById(R.id.project_budget);
-        button = (Button) findViewById(R.id.add_project_button);
 
+        // Adding new projects
+        button = (Button) findViewById(R.id.add_project_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,7 +295,6 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
         Intent intent = new Intent(this, ProjectBoardActivity.class);
         intent.putExtra("Project", projectList.get(position));
         startActivity(intent);
-
 
     }
 

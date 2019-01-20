@@ -8,12 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.ProjectViewHolder> {
-
 
     private Context context;
     private ArrayList<Project> projects;
