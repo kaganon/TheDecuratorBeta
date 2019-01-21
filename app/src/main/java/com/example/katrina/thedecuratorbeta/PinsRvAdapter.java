@@ -1,6 +1,5 @@
 package com.example.katrina.thedecuratorbeta;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,25 +7,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.pinterest.android.pdk.PDKPin;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHolder> {
 
@@ -34,7 +28,9 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
 
     private Context mContext;
     private List<PDKPin> pinList;
-    private List<String> products;
+    private String pinName;
+    private String pinPrice;
+    private String productMetadata;
 
 
     public PinsRvAdapter(Context c, List<PDKPin> p) {
@@ -53,76 +49,75 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
     @Override
     public void onBindViewHolder(@NonNull PinsViewHolder viewHolder, final int position) {
 
-        viewHolder.pinTitle.setText(pinList.get(position).getNote());
-        viewHolder.pinCost.setText(pinList.get(position).getNote());
-
+        // Set pinned product image
         Glide.with(mContext)
                 .asBitmap()
                 .load(pinList.get(position).getImageUrl())
                 .into(viewHolder.pinImage);
 
 
+        // Set pinned product title + cost
+        productMetadata = pinList.get(position).getMetadata();
+
+        try {
+            JSONObject reader = new JSONObject(productMetadata);
+            JSONObject pObjectProduct = reader.getJSONObject("product");
+
+            // Set title
+            pinName = pObjectProduct.getString("name");
+            viewHolder.pinTitle.setText(pinName);
+
+            Log.d(TAG, "onBindViewHolder: JSON PIN NAME " + pinName);
+
+            // Set cost
+            JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
+            pinPrice = pObjectOffer.getString("price");
+            viewHolder.pinCost.setText(pinPrice);
+
+            Log.d(TAG, "onBindViewHolder: JSON PIN COST " + pinPrice);
+
+        } catch (JSONException e) {
+            String noTitle = "No title";
+            String noCost = "No cost";
+            viewHolder.pinTitle.setText(noTitle);
+            viewHolder.pinCost.setText(noCost);
+            e.printStackTrace();
+        }
+
+
         viewHolder.pinImage.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                String productString = pinList.get(position).getMetadata();
+
+                productMetadata = pinList.get(position).getMetadata();
 
                 try {
-                    JSONObject reader = new JSONObject(productString);
-                    JSONObject productP = reader.getJSONObject("product");
-                    String pinName = productP.getString("name");
+                    JSONObject reader = new JSONObject(productMetadata);
+                    JSONObject pObjectProduct = reader.getJSONObject("product");
+
+                    // Set title
+                    pinName = pObjectProduct.getString("name");
                     Log.d(TAG, "onClick: JSON PIN NAME " + pinName);
+
+                    // Set cost
+                    JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
+                    pinPrice = pObjectOffer.getString("price");
+
+                    Log.d(TAG, "onClick: JSON PIN COST " + pinPrice);
+
+                    Log.d(TAG, "onClick: JSON:" + pObjectProduct.toString());
+
+                    Toast.makeText(mContext, "Name:" + pinName + " " + "Price: " + pinPrice, Toast.LENGTH_SHORT).show();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                try {
-                    JSONObject reader = new JSONObject(productString);
-                    JSONObject productP = reader.getJSONObject("product");
-                    JSONObject pinPrice = productP.getJSONObject("offer");
-                    String pinPrice2 = pinPrice.getString("price");
-
-                    Log.d(TAG, "onClick: JSON PIN PRICE " + pinPrice2);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-
-
-                products = Arrays.asList(pinList.get(position).getMetadata().split(","));
-                List<String> names;
-                names = Arrays.asList(pinList.get(position).getMetadata().split("name"));
-                List<String> prices;
-
-
-
-
-                String product = products.get(0);
-                String product2 = products.get(1);
-                String product3 = products.get(2);
-                String product4 = products.get(4);
-                String name1 = names.get(1);
-
-
-
-                Log.d(TAG, "onClick: first:" + product + "| ..second: " + product2);
-                Log.d(TAG, "onClick: " + products.toString());
-                Log.d(TAG, "onClick: third:" + product3 + "| fourth: " + product4);
-                Log.d(TAG, "onClick: " + name1);
-
-
-
-                Log.d(TAG, "onClick: " + pinList.get(position).getMetadata());
-                Log.d(TAG, "onClick: " + pinList.get(position).getMetadata());
-                Toast.makeText(mContext, pinList.get(position).getLink(), Toast.LENGTH_SHORT).show();
-
 
             }
         });
 
     }
-
 
 
     @Override
@@ -135,6 +130,7 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
         CircleImageView pinImage;
         TextView pinTitle;
         TextView pinCost;
+
 
         public PinsViewHolder(@NonNull View itemView) {
             super(itemView);

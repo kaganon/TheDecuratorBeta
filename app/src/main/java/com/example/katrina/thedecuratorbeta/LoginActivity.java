@@ -86,17 +86,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
     private void onLoginSuccess() {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
     }
-
-
-
-
 
 
 }

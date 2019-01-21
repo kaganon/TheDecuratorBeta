@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="4dp"
         app:cardElevation="4dp"
+        app:cardMaxElevation="6dp"
         app:cardUseCompatPadding="true"
         app:contentPadding="16dp">
-
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"

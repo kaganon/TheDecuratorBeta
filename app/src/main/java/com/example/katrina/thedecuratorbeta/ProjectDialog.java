@@ -53,7 +53,6 @@ public class ProjectDialog extends AppCompatDialogFragment {
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -115,9 +114,7 @@ public class ProjectDialog extends AppCompatDialogFragment {
             }
         });
 
-
     }
-
 
 
     public interface ProjectDialogListener {

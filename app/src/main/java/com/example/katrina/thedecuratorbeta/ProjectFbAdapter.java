@@ -53,8 +53,8 @@ public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.Proj
 
             projectName = (TextView) itemView.findViewById(R.id.text_proj_name);
             projectBudget = (TextView) itemView.findViewById(R.id.text_proj_budget);
-            this.onProjectListener = onProjectListener;
 
+            this.onProjectListener = onProjectListener;
             itemView.setOnClickListener(this);
         }
 
