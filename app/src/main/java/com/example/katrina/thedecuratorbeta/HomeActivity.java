@@ -1,31 +1,23 @@
 package com.example.katrina.thedecuratorbeta;
 
-import android.app.Activity;
-import android.content.Context;
+
 import android.content.Intent;
-import android.media.Image;
+
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+
 import android.widget.Button;
-import android.widget.GridView;
+
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.Menu;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
@@ -33,21 +25,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.pinterest.android.pdk.PDKBoard;
 import com.pinterest.android.pdk.PDKCallback;
 import com.pinterest.android.pdk.PDKClient;
 import com.pinterest.android.pdk.PDKException;
 import com.pinterest.android.pdk.PDKResponse;
 import com.pinterest.android.pdk.PDKUser;
-import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import stanford.androidlib.SimpleActivity;
 
 import static com.pinterest.android.pdk.Utils.log;
 
@@ -57,12 +43,12 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
 
 
     private boolean _loading = false;
-    private static final String BOARD_FIELDS = "id,name,description,creator,image,counts,created_at";
+
 
     private static boolean DEBUG = true;
 
     private final String USER_FIELDS = "id,image,counts,created_at,first_name,last_name,bio";
-    PDKUser user;
+    private PDKUser user;
 
     private TextView userName;
     private ImageView profileImage;
@@ -191,13 +177,11 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     if (ds.getKey().equals(userId)) {
                         existingUser = true;
                     }
                 }
-
 
                 if (existingUser == false) {
                     Log.d(TAG, "I am inside the false existing user");
