@@ -49,7 +49,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:padding="20dp">
 
             <!-- TODO: Update blank fragment layout -->
@@ -70,7 +70,6 @@
                         android:id="@+id/top_left_img"
                         android:layout_width="126dp"
                         android:layout_height="131dp"
-                        android:src="@drawable/homedecor"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -80,7 +79,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="48dp"
                         android:gravity="center_horizontal"
-                        android:text="$1000.00"
+                        android:text=""
                         android:textColor="#000"
                         android:textSize="8sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +90,6 @@
                         android:layout_width="105dp"
                         android:layout_height="108dp"
                         android:layout_marginEnd="16dp"
-                        android:src="@drawable/homedecor"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -101,7 +99,7 @@
                         android:layout_height="9dp"
                         android:layout_marginEnd="50dp"
                         android:gravity="center_horizontal"
-                        android:text="$5245.00"
+                        android:text=""
                         android:textColor="#000"
                         android:textSize="8sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +112,6 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="108dp"
                         android:layout_marginEnd="8dp"
-                        android:src="@drawable/homedecor"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.84"
                         app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +124,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
-                        android:text="$9876.00"
+                        android:text=""
                         android:textColor="#000"
                         android:textSize="8sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -141,7 +138,6 @@
                         android:layout_height="78dp"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="48dp"
-                        android:src="@drawable/homedecor"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/top_left_txt" />
 
@@ -150,7 +146,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="28dp"
-                        android:text="$2456"
+                        android:text=""
                         android:textColor="#000"
                         android:textSize="8sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -161,7 +157,6 @@
                         android:layout_width="99dp"
                         android:layout_height="104dp"
                         android:layout_marginEnd="12dp"
-                        android:src="@drawable/homedecor"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/center_txt" />
 
@@ -170,7 +165,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="10dp"
                         android:layout_marginEnd="45dp"
-                        android:text="$5203.00"
+                        android:text=""
                         android:textColor="#000"
                         android:textSize="8sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -181,7 +176,6 @@
                         android:layout_width="151dp"
                         android:layout_height="144dp"
                         android:layout_marginTop="24dp"
-                        android:src="@drawable/homedecor"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/bottom_left_txt" />
 
@@ -191,7 +185,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="64dp"
                         android:layout_marginTop="4dp"
-                        android:text="$395.00"
+                        android:text=""
                         android:textColor="#000"
                         android:textSize="8sp"
                         app:layout_constraintStart_toStartOf="parent"

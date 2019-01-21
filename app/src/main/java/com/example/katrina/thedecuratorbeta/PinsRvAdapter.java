@@ -31,11 +31,13 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
     private String pinName;
     private String pinPrice;
     private String productMetadata;
+    private OnPinListener mOnPinListener;
 
 
-    public PinsRvAdapter(Context c, List<PDKPin> p) {
+    public PinsRvAdapter(Context c, List<PDKPin> p, OnPinListener onPinListener) {
         mContext = c;
         pinList = p;
+        mOnPinListener = onPinListener;
     }
 
     @NonNull
@@ -43,7 +45,7 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
     public PinsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         View view = (LayoutInflater.from(mContext).inflate(R.layout.fragment_pins, viewGroup, false));
-        return new PinsViewHolder(view);
+        return new PinsViewHolder(view, mOnPinListener);
     }
 
     @Override
@@ -83,40 +85,6 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
             viewHolder.pinCost.setText(noCost);
             e.printStackTrace();
         }
-
-
-        viewHolder.pinImage.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                productMetadata = pinList.get(position).getMetadata();
-
-                try {
-                    JSONObject reader = new JSONObject(productMetadata);
-                    JSONObject pObjectProduct = reader.getJSONObject("product");
-
-                    // Set title
-                    pinName = pObjectProduct.getString("name");
-                    Log.d(TAG, "onClick: JSON PIN NAME " + pinName);
-
-                    // Set cost
-                    JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
-                    pinPrice = pObjectOffer.getString("price");
-
-                    Log.d(TAG, "onClick: JSON PIN COST " + pinPrice);
-
-                    Log.d(TAG, "onClick: JSON:" + pObjectProduct.toString());
-
-                    Toast.makeText(mContext, "Name:" + pinName + " " + "Price: " + pinPrice, Toast.LENGTH_SHORT).show();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
     }
 
 
@@ -125,21 +93,38 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
         return pinList.size();
     }
 
-    class PinsViewHolder extends RecyclerView.ViewHolder {
+    public class PinsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         CircleImageView pinImage;
         TextView pinTitle;
         TextView pinCost;
+        OnPinListener onPinListener;
 
 
-        public PinsViewHolder(@NonNull View itemView) {
+        public PinsViewHolder(@NonNull View itemView, OnPinListener onPinListener) {
             super(itemView);
             pinImage = itemView.findViewById(R.id.pin_img);
             pinTitle = itemView.findViewById(R.id.pin_title);
             pinCost = itemView.findViewById(R.id.pin_cost);
+            this.onPinListener = onPinListener;
+
+            itemView.setOnClickListener(this);
 
         }
+
+        @Override
+        public void onClick(View v) {
+            onPinListener.onPinClick(getAdapterPosition());
+        }
     }
+
+    public interface OnPinListener{
+        void onPinClick(int position);
+    }
+
+
+
+
 
 
 }

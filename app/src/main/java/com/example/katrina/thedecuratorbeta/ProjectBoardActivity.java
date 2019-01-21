@@ -1,18 +1,14 @@
 package com.example.katrina.thedecuratorbeta;
 
-import android.app.Activity;
-import android.content.Context;
+
 import android.content.Intent;
-import android.media.Image;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,17 +19,19 @@ import com.pinterest.android.pdk.PDKClient;
 import com.pinterest.android.pdk.PDKException;
 import com.pinterest.android.pdk.PDKPin;
 import com.pinterest.android.pdk.PDKResponse;
-import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.pinterest.android.pdk.Utils.log;
 
-public class ProjectBoardActivity extends AppCompatActivity {
+public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAdapter.OnPinListener {
 
     private static final String TAG = "ProjectBoardActivity";
 
@@ -62,12 +60,8 @@ public class ProjectBoardActivity extends AppCompatActivity {
         projectTitle.setText(title);
         projectBudget.setText(budget);
 
-
-        // ---------- START OF PINS ---------- //
         getPins();
 
-        // ---------- SET IMAGES ON THE BOARD -- //
-        setBoardImages();
     }
 
 
@@ -96,49 +90,123 @@ public class ProjectBoardActivity extends AppCompatActivity {
         RecyclerView pinRecyclerview = findViewById(R.id.pins_recycler_view);
         pinRecyclerview.setLayoutManager(layoutManager);
 
-        PinsRvAdapter adapter = new PinsRvAdapter(this, pinList);
+        PinsRvAdapter adapter = new PinsRvAdapter(ProjectBoardActivity.this, pinList, ProjectBoardActivity.this);
         pinRecyclerview.setAdapter(adapter);
     }
 
-    private void setBoardImages() {
-        // Set Circle Images
+    private void setBoardImages(PDKPin product) {
         ImageView topLeftImg, topRightImg, centerImg, bottomLeftImg, bottomRightImg, bottomCenterImg;
+        TextView topLeftCost, topRightcost, centerCost, bottomeLeftCost, bottomRightCost, bottomCenterCost;
 
-        topLeftImg = (ImageView) findViewById(R.id.top_left_img);
-        Glide.with(this)
-                .load("https://images.unsplash.com/photo-1523755231516" +
-                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
-                .into(topLeftImg);
+        String productMetadata = product.getMetadata();
 
-        topRightImg = (ImageView) findViewById(R.id.top_left_img);
-        Glide.with(this)
-                .load("https://images.unsplash.com/photo-1523755231516" +
-                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
-                .into(topRightImg);
+        try {
+            JSONObject reader = new JSONObject(productMetadata);
+            JSONObject pObjectProduct = reader.getJSONObject("product");
 
-        centerImg = (ImageView) findViewById(R.id.top_left_img);
-        Glide.with(this)
-                .load("https://images.unsplash.com/photo-1523755231516" +
-                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
-                .into(centerImg);
+            // Set cost
+            JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
+            String pinPrice = pObjectOffer.getString("price");
+            topLeftCost = findViewById(R.id.top_left_txt);
+            topLeftCost.setText(pinPrice);
 
-        bottomLeftImg = (ImageView) findViewById(R.id.top_left_img);
-        Glide.with(this)
-                .load("https://images.unsplash.com/photo-1523755231516" +
-                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
-                .into(bottomLeftImg);
+            topLeftImg = (ImageView) findViewById(R.id.top_left_img);
+            String productImgUrl = product.getImageUrl();
+            Glide.with(this)
+                    .load(productImgUrl)
+                    .into(topLeftImg);
 
-        bottomRightImg = (ImageView) findViewById(R.id.top_left_img);
-        Glide.with(this)
-                .load("https://images.unsplash.com/photo-1523755231516" +
-                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
-                .into(bottomRightImg);
+            Log.d(TAG, "onBindViewHolder: JSON PIN COST " + pinPrice);
 
-        bottomCenterImg = (ImageView) findViewById(R.id.top_left_img);
-        Glide.with(this)
-                .load("https://images.unsplash.com/photo-1523755231516" +
-                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
-                .into(bottomCenterImg);
+
+        } catch (JSONException e) {
+            String noCost = "No cost";
+            topLeftCost = findViewById(R.id.top_left_txt);
+            topLeftCost.setText(noCost);
+            e.printStackTrace();
+        }
+
+
+
+
+//        topRightImg = (ImageView) findViewById(R.id.top_left_img);
+//        Glide.with(this)
+//                .load("https://images.unsplash.com/photo-1523755231516" +
+//                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
+//                .into(topRightImg);
+//
+//        centerImg = (ImageView) findViewById(R.id.top_left_img);
+//        Glide.with(this)
+//                .load("https://images.unsplash.com/photo-1523755231516" +
+//                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
+//                .into(centerImg);
+//
+//        bottomLeftImg = (ImageView) findViewById(R.id.top_left_img);
+//        Glide.with(this)
+//                .load("https://images.unsplash.com/photo-1523755231516" +
+//                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
+//                .into(bottomLeftImg);
+//
+//        bottomRightImg = (ImageView) findViewById(R.id.top_left_img);
+//        Glide.with(this)
+//                .load("https://images.unsplash.com/photo-1523755231516" +
+//                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
+//                .into(bottomRightImg);
+//
+//        bottomCenterImg = (ImageView) findViewById(R.id.top_left_img);
+//        Glide.with(this)
+//                .load("https://images.unsplash.com/photo-1523755231516" +
+//                        "-e43fd2e8dca5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1275&q=80")
+//                .into(bottomCenterImg);
+
+    }
+
+    private void setBoardImages2(PDKPin product) {
+        ImageView topLeftImg, topRightImg, centerImg, bottomLeftImg, bottomRightImg, bottomCenterImg;
+        TextView topLeftCost, topRightCost, centerCost, bottomeLeftCost, bottomRightCost, bottomCenterCost;
+
+        String productMetadata = product.getMetadata();
+
+        try {
+            JSONObject reader = new JSONObject(productMetadata);
+            JSONObject pObjectProduct = reader.getJSONObject("product");
+
+            // Set cost
+            JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
+            String pinPrice = pObjectOffer.getString("price");
+            topRightCost = findViewById(R.id.top_right_txt);
+            topRightCost.setText(pinPrice);
+
+            topRightImg = (ImageView) findViewById(R.id.top_right_img);
+            String productImgUrl = product.getImageUrl();
+            Glide.with(this)
+                    .load(productImgUrl)
+                    .into(topRightImg);
+
+            Log.d(TAG, "onBindViewHolder: JSON PIN COST " + pinPrice);
+
+
+        } catch (JSONException e) {
+            String noCost = "No cost";
+            topRightCost = findViewById(R.id.top_right_txt);
+            topRightCost.setText(noCost);
+            e.printStackTrace();
+        }
+    }
+
+        @Override
+    public void onPinClick(int position) {
+        PDKPin product = pinList.get(position); // reference to the pin selected
+
+        TextView topLeftCost = (TextView) findViewById(R.id.top_left_txt);
+        int textLength = topLeftCost.getText().length();
+
+        if (textLength == 0) {
+            setBoardImages(product);
+        } else {
+            setBoardImages2(product);
+            Toast.makeText(this, "Didn't work", Toast.LENGTH_LONG).show();
+        }
 
     }
 }
