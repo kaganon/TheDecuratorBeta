@@ -100,6 +100,7 @@
                     android:padding="10dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:onClick="topLeftPinClick"
                         android:id="@+id/top_left_img"
                         android:layout_width="126dp"
                         android:layout_height="131dp"
@@ -119,6 +120,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/top_left_img" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:onClick="topRightPinClick"
                         android:id="@+id/top_right_img"
                         android:layout_width="105dp"
                         android:layout_height="108dp"
@@ -139,6 +141,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/top_right_img" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:onClick="centerPinClick"
                         android:id="@+id/center_img"
                         android:layout_width="215dp"
                         android:layout_height="197dp"
@@ -166,6 +169,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/center_img" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:onClick="bottomLeftPinClick"
                         android:id="@+id/bottom_left_img"
                         android:layout_width="71dp"
                         android:layout_height="78dp"
@@ -186,6 +190,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/bottom_left_img" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:onClick="bottomRightPinClick"
                         android:id="@+id/bottom_right_img"
                         android:layout_width="99dp"
                         android:layout_height="104dp"
@@ -205,6 +210,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/bottom_right_img" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:onClick="bottomCenterPinClick"
                         android:id="@+id/bottom_center_img"
                         android:layout_width="151dp"
                         android:layout_height="144dp"

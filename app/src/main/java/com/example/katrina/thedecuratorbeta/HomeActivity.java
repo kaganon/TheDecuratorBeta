@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -114,7 +115,7 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
         String userId = user.getUid();
 
         recyclerView = (RecyclerView) findViewById(R.id.list_projects);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
         projectReference = FirebaseDatabase.getInstance().getReference()
                 .child("User").child(userId).child("Project");

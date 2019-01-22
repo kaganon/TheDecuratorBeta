@@ -17,6 +17,7 @@ import com.pinterest.android.pdk.PDKPin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -77,11 +78,12 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
 
             String priceWithoutSymbol = pinPrice.substring(1);
             float pinPriceFl = Float.parseFloat(priceWithoutSymbol);
-            String pinPriceFormatted = String.format(String.valueOf(pinPriceFl), "%.2f");
+
+            DecimalFormat df = new DecimalFormat("###.00");
+            String pinPriceFormatted = df.format(pinPriceFl);
             String formattedPriceForTv = "$" + pinPriceFormatted;
 
             viewHolder.pinCost.setText(formattedPriceForTv);
-
             Log.d(TAG, "onBindViewHolder: JSON PIN COST " + pinPrice);
 
         } catch (JSONException e) {

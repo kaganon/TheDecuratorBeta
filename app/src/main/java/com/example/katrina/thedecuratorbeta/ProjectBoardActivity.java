@@ -3,6 +3,7 @@ package com.example.katrina.thedecuratorbeta;
 
 import android.content.Intent;
 
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +42,9 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
     private TextView topLeftCost, topRightCost, centerCost, bottomLeftCost, bottomRightCost, bottomCenterCost;
     private static final String PIN_FIELDS = "id,link,creator,image,counts,note,created_at,board,metadata";
     private Float budgetNum;
+    private TextView estimateTv;
+    private TextView overBudgetTv;
+    private TextView overBudgetPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +57,11 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         String title = project.getTitle();
         String budget = project.getBudget();
         budgetNum = Float.parseFloat(budget);
+        estimateTv = findViewById(R.id.project_board_estimate);
+        overBudgetTv = findViewById(R.id.project_over_budget);
+        overBudgetPrice = findViewById(R.id.over_budget_price);
 
-        DecimalFormat df = new DecimalFormat("###,###.00");
+        DecimalFormat df = new DecimalFormat("###.00");
         String budgetText = df.format(budgetNum);
         String budgetTextFormat = "Budget: $" + budgetText;
 
@@ -63,6 +70,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 
         projectTitle.setText(title);
         projectBudget.setText(budgetTextFormat);
+
 
         getPins();
     }
@@ -187,7 +195,10 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 
             String priceWithoutSymbol = pinPrice.substring(1);
             float pinPriceFl = Float.parseFloat(priceWithoutSymbol);
-            String pinPriceFormatted = String.format(String.valueOf(pinPriceFl), "%.2f");
+
+            DecimalFormat df = new DecimalFormat("###.00");
+            String pinPriceFormatted = df.format(pinPriceFl);
+
             String formattedPriceForTv = "$" + pinPriceFormatted;
 
             textView.setText(formattedPriceForTv);
@@ -208,14 +219,9 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 
     private void getTotalEstimate(PDKPin product) {
 
-        TextView estimateTv = findViewById(R.id.project_board_estimate);
-        TextView overBudgetTv = findViewById(R.id.project_over_budget);
-        TextView overBudgetPrice = findViewById(R.id.over_budget_price);
-
         // Estimate starts at 0
         String currentEstimate = estimateTv.getText().toString();
         float currentEstimateNum = Float.parseFloat(currentEstimate);
-
 
         String productMetadata = product.getMetadata();
 
@@ -239,6 +245,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                 Float budgetDiff = totalEstimate - budgetNum;
                 String budgetDiffFormatted = String.format(String.valueOf(budgetDiff), "%.2f");
                 String fullBudgetFormatted = "$" + budgetDiffFormatted;
+
                 overBudgetTv.setVisibility(View.VISIBLE);
                 overBudgetPrice.setVisibility(View.VISIBLE);
                 overBudgetPrice.setText(fullBudgetFormatted);
@@ -250,8 +257,13 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
     }
 
     private float getPrice(String productPrice) {
-        String priceWithoutSymbol = productPrice.substring(1);
-        float price = Float.parseFloat(priceWithoutSymbol);
+        float price = 0.0f;
+
+        if (productPrice.length() != 0) {
+            String priceWithoutSymbol = productPrice.substring(1);
+            price = Float.parseFloat(priceWithoutSymbol);
+        }
+
         return price;
     }
 
@@ -272,6 +284,116 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         }
 
     }
+
+    private void subtractEstimateCosts(TextView textView) {
+
+        // Subtract price from total estimate and over budget estimate
+        String currentPinCost = textView.getText().toString();
+        float currentPinNum = getPrice(currentPinCost);
+
+        String currentEstimate = estimateTv.getText().toString();
+        float currentEstimateNum = Float.parseFloat(currentEstimate);
+
+        String currentOverBudget = overBudgetPrice.getText().toString();
+        float currentOverBudgetNum = getPrice(currentOverBudget);
+
+        if (currentEstimateNum > 0) {
+            float newEstimate = currentEstimateNum - currentPinNum;
+            String newEstimateText = String.format(Float.toString(newEstimate), "%.2f");
+            estimateTv.setText(newEstimateText);
+        }
+
+        if ((currentOverBudgetNum > 0) && (currentPinNum >= currentOverBudgetNum)){
+            float newOverBudget = 0.0f;
+            String newOverBudgetText = String.format(Float.toString(newOverBudget), "%.2f");
+            overBudgetPrice.setText(newOverBudgetText);
+            overBudgetTv.setVisibility(View.GONE);
+            overBudgetPrice.setVisibility(View.GONE);
+
+        } else if ((currentOverBudgetNum > 0) && (currentPinNum <= currentOverBudgetNum)) {
+            float newOverBudget = currentOverBudgetNum - currentPinNum;
+            String newOverBudgetText = String.format(Float.toString(newOverBudget), "%.2f");
+            overBudgetPrice.setText(newOverBudgetText);
+        }
+    }
+
+    public void topLeftPinClick(View view) {
+        ImageView imageView = (ImageView) view;
+        TextView textView = findViewById(R.id.top_left_txt);
+
+        if (textView.getText().toString().length() != 0) {
+            subtractEstimateCosts(textView);
+        }
+
+        imageView.setImageDrawable(null);
+        textView.setText("");
+    }
+
+    public void topRightPinClick(View view) {
+        ImageView imageView = (ImageView) view;
+        TextView textView = findViewById(R.id.top_right_txt);
+
+        if (textView.getText().toString().length() != 0) {
+            subtractEstimateCosts(textView);
+        }
+
+        imageView.setImageDrawable(null);
+        textView.setText("");
+
+    }
+
+    public void centerPinClick(View view) {
+        ImageView imageView = (ImageView) view;
+        TextView textView = findViewById(R.id.center_txt);
+
+        if (textView.getText().toString().length() != 0) {
+            subtractEstimateCosts(textView);
+        }
+
+        imageView.setImageDrawable(null);
+        textView.setText("");
+
+    }
+
+    public void bottomLeftPinClick(View view) {
+        ImageView imageView = (ImageView) view;
+        TextView textView = findViewById(R.id.bottom_left_txt);
+
+        if (textView.getText().toString().length() != 0) {
+            subtractEstimateCosts(textView);
+        }
+
+        imageView.setImageDrawable(null);
+        textView.setText("");
+
+    }
+
+    public void bottomRightPinClick(View view) {
+        ImageView imageView = (ImageView) view;
+        TextView textView = findViewById(R.id.bottom_right_txt);
+
+        if (textView.getText().toString().length() != 0) {
+            subtractEstimateCosts(textView);
+        }
+
+        imageView.setImageDrawable(null);
+        textView.setText("");
+    }
+
+    public void bottomCenterPinClick(View view) {
+        ImageView imageView = (ImageView) view;
+        TextView textView = findViewById(R.id.bottom_center_txt);
+
+        if (textView.getText().toString().length() != 0) {
+            subtractEstimateCosts(textView);
+        }
+
+        imageView.setImageDrawable(null);
+        textView.setText("");
+    }
+
+
+
 
 
 }
