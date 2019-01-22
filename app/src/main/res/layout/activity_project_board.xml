@@ -38,10 +38,43 @@
         android:orientation="horizontal">
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:text="Total Estimate: "
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/text_estimate"
+            android:layout_marginBottom="10dp"
+            android:text="Total Estimate: $"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/project_board_estimate"
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"
+            android:id="@+id/project_over_budget"
+            android:layout_marginBottom="10dp"
+            android:text="Over Budget by: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/over_budget_price"
+            android:visibility="gone"
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"

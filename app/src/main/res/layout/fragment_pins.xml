@@ -43,10 +43,10 @@
                 android:layout_width="160dp"
                 android:layout_height="20dp"
                 android:text="Pin Object Title"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="2dp"
                 android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="8sp"
-                android:autoSizeMaxTextSize="10sp"
+                android:autoSizeMinTextSize="6sp"
+                android:autoSizeMaxTextSize="8sp"
                 android:textColor="#000"/>
 
             <TextView
@@ -54,14 +54,13 @@
                 android:layout_below="@+id/pin_title"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:layout_marginTop="1dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pin Cost"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="2dp"
                 android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="8sp"
-                android:autoSizeMaxTextSize="10sp"
+                android:autoSizeMinTextSize="6sp"
+                android:autoSizeMaxTextSize="8sp"
                 android:textColor="#000"/>
 
 

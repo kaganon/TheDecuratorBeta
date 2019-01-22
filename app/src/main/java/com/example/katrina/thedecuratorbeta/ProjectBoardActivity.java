@@ -2,16 +2,13 @@ package com.example.katrina.thedecuratorbeta;
 
 
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.os.Handler;
-import android.support.annotation.NonNull;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,11 +24,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.pinterest.android.pdk.Utils.log;
 
@@ -43,6 +40,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
     private ImageView topLeftImg, topRightImg, centerImg, bottomLeftImg, bottomRightImg, bottomCenterImg;
     private TextView topLeftCost, topRightCost, centerCost, bottomLeftCost, bottomRightCost, bottomCenterCost;
     private static final String PIN_FIELDS = "id,link,creator,image,counts,note,created_at,board,metadata";
+    private Float budgetNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +52,19 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 
         String title = project.getTitle();
         String budget = project.getBudget();
+        budgetNum = Float.parseFloat(budget);
+
+        DecimalFormat df = new DecimalFormat("###,###.00");
+        String budgetText = df.format(budgetNum);
+        String budgetTextFormat = "Budget: $" + budgetText;
 
         TextView projectTitle = findViewById(R.id.project_board_title);
         TextView projectBudget = findViewById(R.id.project_board_budget);
 
         projectTitle.setText(title);
-        projectBudget.setText(budget);
+        projectBudget.setText(budgetTextFormat);
 
         getPins();
-
     }
 
     private void getPins() {
@@ -182,7 +184,13 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             // Set cost
             JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
             String pinPrice = pObjectOffer.getString("price");
-            textView.setText(pinPrice);
+
+            String priceWithoutSymbol = pinPrice.substring(1);
+            float pinPriceFl = Float.parseFloat(priceWithoutSymbol);
+            String pinPriceFormatted = String.format(String.valueOf(pinPriceFl), "%.2f");
+            String formattedPriceForTv = "$" + pinPriceFormatted;
+
+            textView.setText(formattedPriceForTv);
 
             String productImgUrl = product.getImageUrl();
             Glide.with(this)
@@ -198,6 +206,55 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         }
     }
 
+    private void getTotalEstimate(PDKPin product) {
+
+        TextView estimateTv = findViewById(R.id.project_board_estimate);
+        TextView overBudgetTv = findViewById(R.id.project_over_budget);
+        TextView overBudgetPrice = findViewById(R.id.over_budget_price);
+
+        // Estimate starts at 0
+        String currentEstimate = estimateTv.getText().toString();
+        float currentEstimateNum = Float.parseFloat(currentEstimate);
+
+
+        String productMetadata = product.getMetadata();
+
+        try {
+
+            JSONObject reader = new JSONObject(productMetadata);
+            JSONObject pObjectProduct = reader.getJSONObject("product");
+
+            // Get Cost
+            JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
+            String pinPrice = pObjectOffer.getString("price");
+
+            float currentPrice = getPrice(pinPrice);
+            float totalEstimate = currentPrice + currentEstimateNum;
+
+            String totalEstimateText = String.format(Float.toString(totalEstimate), "%.2f");
+
+            estimateTv.setText(totalEstimateText);
+
+            if (totalEstimate > budgetNum) {
+                Float budgetDiff = totalEstimate - budgetNum;
+                String budgetDiffFormatted = String.format(String.valueOf(budgetDiff), "%.2f");
+                String fullBudgetFormatted = "$" + budgetDiffFormatted;
+                overBudgetTv.setVisibility(View.VISIBLE);
+                overBudgetPrice.setVisibility(View.VISIBLE);
+                overBudgetPrice.setText(fullBudgetFormatted);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private float getPrice(String productPrice) {
+        String priceWithoutSymbol = productPrice.substring(1);
+        float price = Float.parseFloat(priceWithoutSymbol);
+        return price;
+    }
+
 
     @Override
     public void onPinClick(int position) {
@@ -209,6 +266,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 
         if ((textView != null) && (imageView != null)) {
             setBoardPin(product, imageView, textView);
+            getTotalEstimate(product);
         } else {
             Toast.makeText(this, "CANNOT ADD ANYMORE PROJECTS", Toast.LENGTH_LONG).show();
         }

@@ -74,13 +74,19 @@ public class PinsRvAdapter extends RecyclerView.Adapter<PinsRvAdapter.PinsViewHo
             // Set cost
             JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
             pinPrice = pObjectOffer.getString("price");
-            viewHolder.pinCost.setText(pinPrice);
+
+            String priceWithoutSymbol = pinPrice.substring(1);
+            float pinPriceFl = Float.parseFloat(priceWithoutSymbol);
+            String pinPriceFormatted = String.format(String.valueOf(pinPriceFl), "%.2f");
+            String formattedPriceForTv = "$" + pinPriceFormatted;
+
+            viewHolder.pinCost.setText(formattedPriceForTv);
 
             Log.d(TAG, "onBindViewHolder: JSON PIN COST " + pinPrice);
 
         } catch (JSONException e) {
             String noTitle = "No title";
-            String noCost = "No cost";
+            String noCost = "0";
             viewHolder.pinTitle.setText(noTitle);
             viewHolder.pinCost.setText(noCost);
             e.printStackTrace();
