@@ -34,7 +34,9 @@ public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.Proj
     @Override
     public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
         holder.projectName.setText(projects.get(position).getTitle());
-        holder.projectBudget.setText("Budget: $" + projects.get(position).getBudget());
+        String budget = projects.get(position).getBudget();
+        String budgetFormatted = String.format(budget, "%.2f");
+        holder.projectBudget.setText("Budget: $" + budgetFormatted);
     }
 
     @Override

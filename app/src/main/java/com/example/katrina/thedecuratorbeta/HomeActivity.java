@@ -106,7 +106,7 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
 
     @Override
     public void applyTexts(String name, String budget) {
-        Toast.makeText(this, "New project: " + name + " with $" + budget + "added!",
+        Toast.makeText(this, "New project " + name + "added!",
                 Toast.LENGTH_LONG).show();
     }
 
