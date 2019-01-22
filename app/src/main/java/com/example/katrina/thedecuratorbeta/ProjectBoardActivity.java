@@ -68,6 +68,8 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         TextView projectTitle = findViewById(R.id.project_board_title);
         TextView projectBudget = findViewById(R.id.project_board_budget);
 
+        setTitle(title);
+
         projectTitle.setText(title);
         projectBudget.setText(budgetTextFormat);
 
@@ -211,7 +213,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             Log.d(TAG, "onBindViewHolder: JSON PIN COST " + pinPrice);
 
         } catch (JSONException e) {
-            String noCost = "No cost";
+            String noCost = "0";
             textView.setText(noCost);
             e.printStackTrace();
         }
@@ -237,13 +239,16 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             float currentPrice = getPrice(pinPrice);
             float totalEstimate = currentPrice + currentEstimateNum;
 
-            String totalEstimateText = String.format(Float.toString(totalEstimate), "%.2f");
+            DecimalFormat df = new DecimalFormat("###.00");
+            String totalEstimateText = df.format(totalEstimate);
+
 
             estimateTv.setText(totalEstimateText);
 
             if (totalEstimate > budgetNum) {
                 Float budgetDiff = totalEstimate - budgetNum;
-                String budgetDiffFormatted = String.format(String.valueOf(budgetDiff), "%.2f");
+
+                String budgetDiffFormatted = df.format(budgetDiff);
                 String fullBudgetFormatted = "$" + budgetDiffFormatted;
 
                 overBudgetTv.setVisibility(View.VISIBLE);
@@ -303,7 +308,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             estimateTv.setText(newEstimateText);
         }
 
-        if ((currentOverBudgetNum > 0) && (currentPinNum >= currentOverBudgetNum)){
+        if ((currentOverBudgetNum >= 0) && (currentPinNum >= currentOverBudgetNum)){
             float newOverBudget = 0.0f;
             String newOverBudgetText = String.format(Float.toString(newOverBudget), "%.2f");
             overBudgetPrice.setText(newOverBudgetText);

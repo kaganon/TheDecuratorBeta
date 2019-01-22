@@ -23,6 +23,8 @@ import com.pinterest.android.pdk.PDKResponse;
 import com.pinterest.android.pdk.PDKUser;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import static android.content.ContentValues.TAG;
 import static com.pinterest.android.pdk.Utils.log;
 
@@ -34,7 +36,7 @@ public class ProjectDialog extends AppCompatDialogFragment {
     private TextView userName;
     private final String USER_FIELDS = "id,image,counts,created_at,first_name,last_name,bio";
     private static boolean DEBUG = true;
-    PDKUser user;
+    private PDKUser user;
 
     DatabaseReference projectsReference;
 
@@ -42,6 +44,7 @@ public class ProjectDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        getUser();
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.layout_dialog, null);
@@ -53,6 +56,7 @@ public class ProjectDialog extends AppCompatDialogFragment {
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        // DO NOTHING
                     }
                 })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -87,9 +91,7 @@ public class ProjectDialog extends AppCompatDialogFragment {
 
     }
 
-
-    public void addProject(final String title, final String budget) {
-
+    public void getUser() {
         PDKClient.getInstance().getMe(USER_FIELDS, new PDKCallback() {
 
             @Override
@@ -97,15 +99,6 @@ public class ProjectDialog extends AppCompatDialogFragment {
                 if (DEBUG) log(String.format("Status: %d", response.getStatusCode()));
                 user = response.getUser();
 
-                String id = user.getUid();
-
-                Project project = new Project(title, budget);
-
-                String projectId = projectsReference.child(id)
-                        .child("Project").push().getKey();
-
-                projectsReference.child(id).child("Project").child(projectId)
-                        .setValue(project);
             }
 
             @Override
@@ -113,8 +106,39 @@ public class ProjectDialog extends AppCompatDialogFragment {
                 if (DEBUG) log(exception.getDetailMessage());
             }
         });
+    }
+
+
+    public void addProject(final String title, final String budget) {
+
+//
+//
+//        PDKClient.getInstance().getMe(USER_FIELDS, new PDKCallback() {
+//
+//            @Override
+//            public void onSuccess(PDKResponse response) {
+//                if (DEBUG) log(String.format("Status: %d", response.getStatusCode()));
+//                user = response.getUser();
+
+                String id = user.getUid();
+
+                String projectId = projectsReference.child(id)
+                        .child("Project").push().getKey();
+
+                Project project = new Project(title, budget, projectId);
+
+                projectsReference.child(id).child("Project").child(projectId)
+                        .setValue(project);
+//            }
+//
+//            @Override
+//            public void onFailure(PDKException exception) {
+//                if (DEBUG) log(exception.getDetailMessage());
+//            }
+//        });
 
     }
+
 
 
     public interface ProjectDialogListener {

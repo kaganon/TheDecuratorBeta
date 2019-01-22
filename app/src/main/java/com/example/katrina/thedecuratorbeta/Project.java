@@ -6,18 +6,21 @@ import android.os.Parcelable;
 public class Project implements Parcelable {
     private String title;
     private String budget;
+    private String id;
 
     public Project() {
     }
 
-    public Project(String title, String budget) {
+    public Project(String title, String budget, String id) {
         this.title = title;
         this.budget = budget;
+        this.id = id;
     }
 
     protected Project(Parcel in) {
         title = in.readString();
         budget = in.readString();
+        id = in.readString();
     }
 
     public static final Creator<Project> CREATOR = new Creator<Project>() {
@@ -48,6 +51,14 @@ public class Project implements Parcelable {
         this.budget = budget;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -57,5 +68,6 @@ public class Project implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(budget);
+        dest.writeString(id);
     }
 }

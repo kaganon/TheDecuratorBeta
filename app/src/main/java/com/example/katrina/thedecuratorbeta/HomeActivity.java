@@ -1,9 +1,12 @@
 package com.example.katrina.thedecuratorbeta;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.pinterest.android.pdk.PDKCallback;
 import com.pinterest.android.pdk.PDKClient;
@@ -38,7 +42,7 @@ import java.util.ArrayList;
 
 import static com.pinterest.android.pdk.Utils.log;
 
-public class HomeActivity extends AppCompatActivity implements ProjectDialog.ProjectDialogListener, ProjectFbAdapter.OnProjectListener {
+public class HomeActivity extends AppCompatActivity implements ProjectDialog.ProjectDialogListener, ProjectFbAdapter.OnProjectListener, ProjectFbAdapter.OnProjectLongListener {
 
     private static final String TAG = "HomeActivity";
 
@@ -55,6 +59,7 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
     private ImageView profileImage;
 
     private Button button;
+    private Button deleteButton;
 
     private DatabaseReference projectReference;
 
@@ -85,6 +90,9 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
             }
         });
 
+
+
+
         _loading = true;
 
         getMe();
@@ -101,6 +109,7 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
         Toast.makeText(this, "New project: " + name + " with $" + budget + "added!",
                 Toast.LENGTH_LONG).show();
     }
+
 
     private void setUser() {
         userName.setText("Welcome, " + user.getFirstName());
@@ -131,7 +140,7 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
                     projectList.add(p);
                 }
 
-                projectFbAdapter = new ProjectFbAdapter(HomeActivity.this, projectList, HomeActivity.this);
+                projectFbAdapter = new ProjectFbAdapter(HomeActivity.this, projectList, HomeActivity.this, HomeActivity.this);
                 recyclerView.setAdapter(projectFbAdapter);
             }
 
@@ -215,5 +224,57 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
 
     }
 
+    private void deleteProject(Project project) {
+        String projectKey = project.getId();
+        Query mQuery = projectReference.orderByKey().equalTo(projectKey);
+
+        mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                    ds.getRef().removeValue();
+                }
+                Toast.makeText(HomeActivity.this, "Project deleted successfully", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(HomeActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+    }
+
+
+
+    @Override
+    public void onProjectLongClick(int position) {
+        // open delete dialog
+        // and delete project
+        Project project = projectList.get(position); // reference to the project
+        showDeleteDialog(project);
+    }
+
+    private void showDeleteDialog(final Project project) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        builder.setTitle("Delete");
+        builder.setMessage("Are you sure you want to delete this project?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // delete project
+                deleteProject(project);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // do nothing
+            }
+        });
+
+        builder.create().show();
+    }
 
 }

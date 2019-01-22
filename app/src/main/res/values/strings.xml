@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">thedecuratorbeta</string>
-    <string name="project_title">Project:  </string>
-    <string name="project_budget">Budget: </string>
+    <string name="project_title">Project Title </string>
+    <string name="project_budget">Budget $100.00 </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

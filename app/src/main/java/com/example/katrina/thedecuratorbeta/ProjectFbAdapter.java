@@ -15,18 +15,20 @@ public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.Proj
     private Context context;
     private ArrayList<Project> projects;
     private OnProjectListener mOnProjectListener;
+    private OnProjectLongListener mOnProjectLongListener;
 
-    public ProjectFbAdapter(Context c, ArrayList<Project> p, OnProjectListener onProjectListener) {
+    public ProjectFbAdapter(Context c, ArrayList<Project> p, OnProjectListener onProjectListener, OnProjectLongListener onProjectLongListener) {
         context = c;
         projects = p;
         mOnProjectListener = onProjectListener;
+        mOnProjectLongListener = onProjectLongListener;
     }
 
     @NonNull
     @Override
     public ProjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = (LayoutInflater.from(context).inflate(R.layout.item_project_list, viewGroup, false));
-        return new ProjectViewHolder(view, mOnProjectListener);
+        return new ProjectViewHolder(view, mOnProjectListener, mOnProjectLongListener);
     }
 
     @Override
@@ -40,31 +42,47 @@ public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.Proj
         return projects.size();
     }
 
-    class ProjectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ProjectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
+        OnProjectLongListener onProjectLongListener;
         OnProjectListener onProjectListener;
 
         TextView projectName;
         TextView projectBudget;
 
 
-        public ProjectViewHolder(@NonNull View itemView, OnProjectListener onProjectListener) {
+        public ProjectViewHolder(@NonNull View itemView, OnProjectListener onProjectListener, OnProjectLongListener onProjectLongListener) {
             super(itemView);
 
             projectName = (TextView) itemView.findViewById(R.id.text_proj_name);
             projectBudget = (TextView) itemView.findViewById(R.id.text_proj_budget);
 
             this.onProjectListener = onProjectListener;
+            this.onProjectLongListener = onProjectLongListener;
+
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             onProjectListener.onProjectClick(getAdapterPosition());
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+            onProjectLongListener.onProjectLongClick(getAdapterPosition());
+            return false;
+        }
     }
 
     public interface OnProjectListener {
         void onProjectClick(int position);
     }
+
+    public interface OnProjectLongListener {
+        void onProjectLongClick(int position);
+    }
+
+
 }
