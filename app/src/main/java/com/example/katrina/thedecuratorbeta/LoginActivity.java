@@ -24,7 +24,7 @@ import com.pinterest.android.pdk.PDKUser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity {
 
     private PDKClient pdkClient;
     private static final String appID = BuildConfig.AppId;
@@ -36,8 +36,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        loginButton = (Button) findViewById(R.id.login_button);
-        loginButton.setOnClickListener(this);
+//        loginButton = (Button) findViewById(R.id.login_button);
+//        loginButton.setOnClickListener(this);
 
         pdkClient = PDKClient.configureInstance(this, appID);
         pdkClient.onConnect(this);
@@ -74,15 +74,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @Override
-    public void onClick(View view) {
-        int viewId = view.getId();
-        switch (viewId) {
-            case R.id.login_button:
-                onLogin();
-                break;
-        }
+//    @Override
+//    public void onClick(View view) {
+//        int viewId = view.getId();
+//        switch (viewId) {
+//            case R.id.login_button:
+//                onLogin();
+//                break;
+//        }
+//
+//    }
 
+    public void loginClick(View view) {
+        onLogin();
     }
 
 

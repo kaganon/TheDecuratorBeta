@@ -91,8 +91,6 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
         });
 
 
-
-
         _loading = true;
 
         getMe();

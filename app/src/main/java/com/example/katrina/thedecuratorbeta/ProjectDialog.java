@@ -76,7 +76,6 @@ public class ProjectDialog extends AppCompatDialogFragment {
 
 
         return builder.create();
-
     }
 
     @Override
@@ -110,7 +109,7 @@ public class ProjectDialog extends AppCompatDialogFragment {
 
 
     public void addProject(final String title, final String budget) {
-        
+
         String id = user.getUid();
 
         String projectId = projectsReference.child(id)

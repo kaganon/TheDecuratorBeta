@@ -91,7 +91,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                 .child(userId);
 
         getPins();
-//        getSavedPins();
+        getSavedPins();
     }
 
     private void getPins() {
@@ -196,7 +196,6 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         }
 
         return imageView;
-
     }
 
 
@@ -227,6 +226,8 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                     .into(imageView);
 
             Log.d(TAG, "onBindViewHolder: JSON PIN COST " + pinPrice);
+
+
 
         } catch (JSONException e) {
             String noCost = "0";
@@ -331,26 +332,28 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         pinsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                savedPinsList = new ArrayList<Pin>();
+//                savedPinsList = new ArrayList<Pin>();
 
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Pin p = ds.getValue(Pin.class);
-                    savedPinsList.add(p);
-                }
-
-                for (Pin pin : savedPinsList) {
                     ImageView imageView = getEmptyImageView();
                     TextView textView = getEmptyTextView();
 
+                    Pin p = ds.getValue(Pin.class);
+
                     if ((textView != null) && (imageView != null)) {
                         // set image
-                        Glide.with(ProjectBoardActivity.this)
-                                .load(pin.getImgUrl())
+                        Glide.with(getApplicationContext())
+                                .load(p.getImgUrl())
                                 .into(imageView);
 
                         // set price
-                        String priceFormatted = "$" + pin.getPrice();
+                        String priceFormatted = "$" + p.getPrice();
                         textView.setText(priceFormatted);
+
+                        Log.d(TAG, "onDataChange: " + p.getImgUrl());
+                        Log.d(TAG, "onDataChange: " + p.getId());
+                        Log.d(TAG, "onDataChange: " + p.getPrice());
+
 
                     } else {
                         Toast.makeText(ProjectBoardActivity.this, "Too many pins added",
@@ -359,14 +362,40 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                         //TODO --- DON'T ADD TOO MAKE PINS, BC THIS WILL BE AN ERROR
                         // MAKE SURE TO ONLY HAVE 6 PINS IN THE DB
                     }
-
-                    Log.d(TAG, "onDataChange: " + savedPinsList.get(0).toString());
-                    Log.d(TAG, "onDataChange: " + pin.getImgUrl());
-                    Log.d(TAG, "onDataChange: " + pin.getId());
-                    Log.d(TAG, "onDataChange: " + pin.getPrice());
+//                    savedPinsList.add(p);
                 }
 
-//                getInitialEstimate(savedPinsList);
+
+
+//                for (Pin pin : savedPinsList) {
+//                    ImageView imageView = getEmptyImageView();
+//                    TextView textView = getEmptyTextView();
+//
+//                    if ((textView != null) && (imageView != null)) {
+//                        // set image
+//                        Glide.with(ProjectBoardActivity.this)
+//                                .load(pin.getImgUrl())
+//                                .into(imageView);
+//
+//                        // set price
+//                        String priceFormatted = "$" + pin.getPrice();
+//                        textView.setText(priceFormatted);
+//
+//                    } else {
+//                        Toast.makeText(ProjectBoardActivity.this, "Too many pins added",
+//                                Toast.LENGTH_LONG).show();
+//
+//                        //TODO --- DON'T ADD TOO MAKE PINS, BC THIS WILL BE AN ERROR
+//                        // MAKE SURE TO ONLY HAVE 6 PINS IN THE DB
+//                    }
+//
+//                    Log.d(TAG, "onDataChange: " + savedPinsList.get(0).toString());
+//                    Log.d(TAG, "onDataChange: " + pin.getImgUrl());
+//                    Log.d(TAG, "onDataChange: " + pin.getId());
+//                    Log.d(TAG, "onDataChange: " + pin.getPrice());
+//                }
+
+                getInitialEstimate(savedPinsList);
             }
 
             @Override
@@ -419,7 +448,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         ImageView imageView = getEmptyImageView();
 
         if ((textView != null) && (imageView != null)) {
-            setBoardPin(product, imageView, textView);
+//            setBoardPin(product, imageView, textView);
             getTotalEstimate(product);
 
             // add pin to firebase
