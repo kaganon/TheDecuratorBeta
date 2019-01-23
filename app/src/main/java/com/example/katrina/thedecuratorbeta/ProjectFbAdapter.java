@@ -38,11 +38,10 @@ public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.Proj
         String budget = projects.get(position).getBudget();
 
         float currentBudget = Float.parseFloat(budget);
-
         DecimalFormat df = new DecimalFormat("###.00");
-        String budgetFormatted = df.format(currentBudget);
+        String budgetFormatted = "Budget: $" + df.format(currentBudget);
 
-        holder.projectBudget.setText("Budget: $" + budgetFormatted);
+        holder.projectBudget.setText(budgetFormatted);
     }
 
     @Override

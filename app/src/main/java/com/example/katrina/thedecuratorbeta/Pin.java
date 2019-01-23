@@ -3,12 +3,10 @@ package com.example.katrina.thedecuratorbeta;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Pin  implements Parcelable {
-
+public class Pin implements Parcelable {
     private String price;
     private String imgUrl;
     private String id;
-
 
     public Pin() {
     }
@@ -58,7 +56,7 @@ public class Pin  implements Parcelable {
     }
 
     public void setId(String id) {
-        this.price = id;
+        this.id = id;
     }
 
 

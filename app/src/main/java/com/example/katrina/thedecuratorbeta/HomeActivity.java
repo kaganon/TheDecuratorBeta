@@ -147,7 +147,7 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(HomeActivity.this,
-                        "Ooops, something went wrong:" + databaseError, Toast.LENGTH_SHORT).show();
+                        "Ooops, something went wrong:" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

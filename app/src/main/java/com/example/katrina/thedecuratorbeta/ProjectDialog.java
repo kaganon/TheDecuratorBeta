@@ -110,35 +110,17 @@ public class ProjectDialog extends AppCompatDialogFragment {
 
 
     public void addProject(final String title, final String budget) {
+        
+        String id = user.getUid();
 
-//
-//
-//        PDKClient.getInstance().getMe(USER_FIELDS, new PDKCallback() {
-//
-//            @Override
-//            public void onSuccess(PDKResponse response) {
-//                if (DEBUG) log(String.format("Status: %d", response.getStatusCode()));
-//                user = response.getUser();
+        String projectId = projectsReference.child(id)
+                .child("Project").push().getKey();
 
-                String id = user.getUid();
+        Project project = new Project(title, budget, projectId);
 
-                String projectId = projectsReference.child(id)
-                        .child("Project").push().getKey();
-
-                Project project = new Project(title, budget, projectId);
-
-                projectsReference.child(id).child("Project").child(projectId)
-                        .setValue(project);
-//            }
-//
-//            @Override
-//            public void onFailure(PDKException exception) {
-//                if (DEBUG) log(exception.getDetailMessage());
-//            }
-//        });
-
+        projectsReference.child(id).child("Project").child(projectId)
+                .setValue(project);
     }
-
 
 
     public interface ProjectDialogListener {

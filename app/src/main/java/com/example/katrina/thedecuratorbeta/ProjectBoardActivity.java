@@ -4,6 +4,7 @@ package com.example.katrina.thedecuratorbeta;
 import android.content.Intent;
 
 import android.media.Image;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,8 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pinterest.android.pdk.PDKCallback;
 import com.pinterest.android.pdk.PDKClient;
 import com.pinterest.android.pdk.PDKException;
@@ -47,9 +51,12 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
     private TextView estimateTv;
     private TextView overBudgetTv;
     private TextView overBudgetPrice;
-    DatabaseReference projectsReference;
+    private DatabaseReference projectsReference;
     private Project project;
     private User user;
+    private List<Pin> savedPinsList;
+    private DatabaseReference pinsReference;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +91,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                 .child(userId);
 
         getPins();
+//        getSavedPins();
     }
 
     private void getPins() {
@@ -93,7 +101,6 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             public void onSuccess(PDKResponse response) {
                 if (DEBUG) log(String.format("Status: %d", response.getStatusCode()));
                 pinList = response.getPinList();
-
                 setPins();
             }
 
@@ -154,7 +161,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 
 
     private ImageView getEmptyImageView() {
-        final List<ImageView> imageViewList = new ArrayList<>();
+        List<ImageView> imageViewList = new ArrayList<>();
 
         topLeftImg = findViewById(R.id.top_left_img);
         imageViewList.add(topLeftImg);
@@ -255,7 +262,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             estimateTv.setText(totalEstimateText);
 
             if (totalEstimate > budgetNum) {
-                Float budgetDiff = totalEstimate - budgetNum;
+                float budgetDiff = totalEstimate - budgetNum;
 
                 String budgetDiffFormatted = df.format(budgetDiff);
                 String fullBudgetFormatted = "$" + budgetDiffFormatted;
@@ -273,7 +280,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
     private float getPrice(String productPrice) {
         float price = 0.0f;
 
-        if (productPrice.length() != 0) {
+        if (productPrice.length() > 0) {
             String priceWithoutSymbol = productPrice.substring(1);
             price = Float.parseFloat(priceWithoutSymbol);
         }
@@ -305,8 +312,8 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             String pinId = projectsReference.child("Project").child(projectId)
                     .child("Pin").push().getKey();
 
+            // ADD DATA TO FB
             Pin pin = new Pin(pinPriceFormatted, imgUrl, pinId);
-
             projectsReference.child("Project").child(projectId)
                     .child("Pin").child(pinId).setValue(pin);
 
@@ -314,9 +321,90 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             e.printStackTrace();
         }
 
+    }
 
+    private void getSavedPins() {
+        String projectId = project.getId();
+        pinsReference = projectsReference.child("Project")
+                .child(projectId).child("Pin");
 
+        pinsReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                savedPinsList = new ArrayList<Pin>();
 
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Pin p = ds.getValue(Pin.class);
+                    savedPinsList.add(p);
+                }
+
+                for (Pin pin : savedPinsList) {
+                    ImageView imageView = getEmptyImageView();
+                    TextView textView = getEmptyTextView();
+
+                    if ((textView != null) && (imageView != null)) {
+                        // set image
+                        Glide.with(ProjectBoardActivity.this)
+                                .load(pin.getImgUrl())
+                                .into(imageView);
+
+                        // set price
+                        String priceFormatted = "$" + pin.getPrice();
+                        textView.setText(priceFormatted);
+
+                    } else {
+                        Toast.makeText(ProjectBoardActivity.this, "Too many pins added",
+                                Toast.LENGTH_LONG).show();
+
+                        //TODO --- DON'T ADD TOO MAKE PINS, BC THIS WILL BE AN ERROR
+                        // MAKE SURE TO ONLY HAVE 6 PINS IN THE DB
+                    }
+
+                    Log.d(TAG, "onDataChange: " + savedPinsList.get(0).toString());
+                    Log.d(TAG, "onDataChange: " + pin.getImgUrl());
+                    Log.d(TAG, "onDataChange: " + pin.getId());
+                    Log.d(TAG, "onDataChange: " + pin.getPrice());
+                }
+
+//                getInitialEstimate(savedPinsList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ProjectBoardActivity.this, "Oops, something went wrong:" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void getInitialEstimate(List<Pin> savedPinsList) {
+        float totalEstimate = 0.0f;
+
+        for (Pin pin : savedPinsList) {
+            Log.d(TAG, "getInitialEstimate: " + savedPinsList.get(0).toString());
+            Log.d(TAG, "getInitialEstimate: " + pin.getPrice());
+            Log.d(TAG, "getInitialEstimate: " + pin.getId());
+            Log.d(TAG, "getInitialEstimate: " + pin.getImgUrl());
+            String price = pin.getPrice();
+            float priceNum = Float.parseFloat(price);
+            totalEstimate += priceNum;
+        }
+
+        DecimalFormat df = new DecimalFormat("###.00");
+        String totalEstimateFormatted = df.format(totalEstimate);
+
+        estimateTv.setText(totalEstimateFormatted);
+
+        if (totalEstimate > budgetNum) {
+            float budgetDiff = totalEstimate - budgetNum;
+
+            String budgetDiffFormatted = df.format(budgetDiff);
+            String fullBudgetFormatted = "$" + budgetDiffFormatted;
+
+            overBudgetTv.setVisibility(View.VISIBLE);
+            overBudgetPrice.setVisibility(View.VISIBLE);
+            overBudgetPrice.setText(fullBudgetFormatted);
+        }
     }
 
 
@@ -361,7 +449,7 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             estimateTv.setText(newEstimateText);
         }
 
-        if ((currentOverBudgetNum >= 0) && (currentPinNum >= currentOverBudgetNum)){
+        if ((currentOverBudgetNum >= 0) && (currentPinNum >= currentOverBudgetNum)) {
             float newOverBudget = 0.0f;
             String newOverBudgetText = String.format(Float.toString(newOverBudget), "%.2f");
             overBudgetPrice.setText(newOverBudgetText);
@@ -383,6 +471,8 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
             subtractEstimateCosts(textView);
         }
 
+
+        // TODO -- REMOVE FROM FIREBASE
         // REMOVE FROM FIREBASE
 
         imageView.setImageDrawable(null);
@@ -451,9 +541,6 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         imageView.setImageDrawable(null);
         textView.setText("");
     }
-
-
-
 
 
 }
