@@ -11,12 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="4dp"
-        app:cardElevation="4dp"
-        app:cardMaxElevation="6dp"
+        app:cardElevation="6dp"
+        app:cardMaxElevation="8dp"
         app:cardUseCompatPadding="true"
         app:contentPadding="16dp">
 
         <android.support.constraint.ConstraintLayout
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

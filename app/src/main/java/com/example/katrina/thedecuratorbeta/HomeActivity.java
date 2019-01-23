@@ -104,13 +104,13 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
 
     @Override
     public void applyTexts(String name, String budget) {
-        Toast.makeText(this, "New project " + name + "added!",
+        Toast.makeText(this, "New project " + name + " added!",
                 Toast.LENGTH_LONG).show();
     }
 
 
     private void setUser() {
-        userName.setText("Welcome, " + user.getFirstName());
+        userName.setText("Welcome, " + user.getFirstName() + "!");
         String userImgUrl = user.getImageUrl();
         profileImage = (ImageView) findViewById(R.id.profile_img);
         Glide.with(this)

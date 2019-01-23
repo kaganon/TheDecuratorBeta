@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center|top"
     android:orientation="vertical"
+    android:background="@color/cardview_light_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
@@ -19,14 +20,15 @@
             android:paddingTop="2dp"
             android:layout_weight="1"
             android:id="@+id/profile_img"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_width="60dp"
+            android:layout_height="60dp" />
 
         <TextView
+            android:text="Welcome, Katrina!"
             android:textColor="#000"
             android:layout_weight="1"
             android:id="@+id/user_name"
-            android:textSize="25dp"
+            android:textSize="24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -39,6 +41,7 @@
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
+        android:background="@drawable/homedecor"
         android:id="@+id/list_projects"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

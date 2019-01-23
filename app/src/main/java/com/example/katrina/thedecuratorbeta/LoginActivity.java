@@ -1,6 +1,7 @@
 package com.example.katrina.thedecuratorbeta;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,12 +37,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
 //        loginButton = (Button) findViewById(R.id.login_button);
 //        loginButton.setOnClickListener(this);
 
         pdkClient = PDKClient.configureInstance(this, appID);
         pdkClient.onConnect(this);
         pdkClient.setDebugMode(true);
+
     }
 
     @Override
