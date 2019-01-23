@@ -220,6 +220,8 @@ public class HomeActivity extends AppCompatActivity implements ProjectDialog.Pro
         Log.d(TAG, "onProjectClick: CLICKED!");
         Intent intent = new Intent(this, ProjectBoardActivity.class);
         intent.putExtra("Project", projectList.get(position));
+        User loggedInUser = new User(user.getUid());
+        intent.putExtra("User", loggedInUser);
         startActivity(intent);
 
     }

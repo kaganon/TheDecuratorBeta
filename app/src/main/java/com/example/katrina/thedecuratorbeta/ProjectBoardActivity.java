@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.pinterest.android.pdk.PDKCallback;
 import com.pinterest.android.pdk.PDKClient;
 import com.pinterest.android.pdk.PDKException;
@@ -45,6 +47,9 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
     private TextView estimateTv;
     private TextView overBudgetTv;
     private TextView overBudgetPrice;
+    DatabaseReference projectsReference;
+    private Project project;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,8 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         setContentView(R.layout.activity_project_board);
 
         Intent intent = getIntent();
-        Project project = ((Intent) intent).getParcelableExtra("Project");
+        project = ((Intent) intent).getParcelableExtra("Project");
+        user = ((Intent) intent).getParcelableExtra("User");
 
         String title = project.getTitle();
         String budget = project.getBudget();
@@ -73,6 +79,9 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         projectTitle.setText(title);
         projectBudget.setText(budgetTextFormat);
 
+        String userId = user.getUserId();
+        projectsReference = FirebaseDatabase.getInstance().getReference("User")
+                .child(userId);
 
         getPins();
     }
@@ -272,10 +281,50 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         return price;
     }
 
+    private void addPinToFbDb(PDKPin product) {
+        // Get product image url
+        String imgUrl = product.getImageUrl();
+
+        // Get product price
+        String productMetadata = product.getMetadata();
+        try {
+            JSONObject reader = new JSONObject(productMetadata);
+            JSONObject pObjectProduct = reader.getJSONObject("product");
+
+            JSONObject pObjectOffer = pObjectProduct.getJSONObject("offer");
+            String pinPrice = pObjectOffer.getString("price");
+
+            String priceWithoutSymbol = pinPrice.substring(1);
+            float pinPriceFl = Float.parseFloat(priceWithoutSymbol);
+
+            DecimalFormat df = new DecimalFormat("###.00");
+            String pinPriceFormatted = df.format(pinPriceFl);
+
+            String projectId = project.getId();
+
+            String pinId = projectsReference.child("Project").child(projectId)
+                    .child("Pin").push().getKey();
+
+            Pin pin = new Pin(pinPriceFormatted, imgUrl, pinId);
+
+            projectsReference.child("Project").child(projectId)
+                    .child("Pin").child(pinId).setValue(pin);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
 
     @Override
     public void onPinClick(int position) {
         PDKPin product = pinList.get(position); // reference to the pin selected
+
+
         // check if imageview is empty, then send to board pin product, and send the
         // image view as a parameter into the setBoardPin method
         TextView textView = getEmptyTextView();
@@ -284,8 +333,12 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         if ((textView != null) && (imageView != null)) {
             setBoardPin(product, imageView, textView);
             getTotalEstimate(product);
+
+            // add pin to firebase
+            addPinToFbDb(product);
         } else {
-            Toast.makeText(this, "CANNOT ADD ANYMORE PROJECTS", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "PLEASE REMOVE A PROJECT BEFORE ADDING A NEW ONE"
+                    , Toast.LENGTH_LONG).show();
         }
 
     }
@@ -329,6 +382,8 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
         if (textView.getText().toString().length() != 0) {
             subtractEstimateCosts(textView);
         }
+
+        // REMOVE FROM FIREBASE
 
         imageView.setImageDrawable(null);
         textView.setText("");

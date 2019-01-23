@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.ProjectViewHolder> {
@@ -35,7 +36,12 @@ public class ProjectFbAdapter extends RecyclerView.Adapter<ProjectFbAdapter.Proj
     public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
         holder.projectName.setText(projects.get(position).getTitle());
         String budget = projects.get(position).getBudget();
-        String budgetFormatted = String.format(budget, "%.2f");
+
+        float currentBudget = Float.parseFloat(budget);
+
+        DecimalFormat df = new DecimalFormat("###.00");
+        String budgetFormatted = df.format(currentBudget);
+
         holder.projectBudget.setText("Budget: $" + budgetFormatted);
     }
 
