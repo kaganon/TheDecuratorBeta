@@ -347,7 +347,12 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 //            getTotalEstimate(product);
 
         // add pin to firebase
-        addPinToFbDb(product);
+        if (savedPinsList.size() <= 6) {
+            addPinToFbDb(product);
+        } else {
+            Toast.makeText(this, "BOARD FULL. PLEASE REMOVE A PRODUCT BEFORE ADDING A NEW ONE.", Toast.LENGTH_LONG).show();
+        }
+
 //        } else {
 //            Toast.makeText(this, "PLEASE REMOVE A PROJECT BEFORE ADDING A NEW ONE"
 //                    , Toast.LENGTH_LONG).show();
@@ -373,14 +378,6 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                 float totalSavedEstimate = 0.0f;
                 float totalOverBudget = 0.0f;
                 float budgetDiff = 0.0f;
-
-
-                // TODO
-                // get over budget:
-                // budget = 1000
-                // totalSaved estimate = 1500
-                // total Overbudget = 500
-                // total Overbudget = totalSavedEstimate - Budget;
 
 
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -415,13 +412,34 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                     float priceNum = Float.parseFloat(price);
                     totalSavedEstimate += priceNum;
 
-                    if (totalSavedEstimate > budgetNum) {
-                        budgetDiff = totalSavedEstimate - budgetNum;
-                    }
 
-                    totalOverBudget += budgetDiff;
 //                    savedPinsList.add(p);
                 }
+
+                if (totalSavedEstimate > budgetNum) {
+                    budgetDiff = totalSavedEstimate - budgetNum;
+                } else if (totalSavedEstimate <= budgetNum) {
+                    budgetDiff = 0.0f;
+                }
+
+                totalOverBudget += budgetDiff;
+
+                // TODO
+                // get over budget:
+                // budget = 1000 --ALWAYS SAME
+                // totalSaved estimate = 1500 -- CHANGES
+                // total Overbudget = 500
+                // total Overbudget = totalSavedEstimate - Budget;
+
+
+                // on remove
+                // budget 1000
+                // take out 300 product
+                // total saved = 1200
+                // total over budget = 200
+                // total over budget = total estimate - budget
+
+
 
                 int i = 0;
                 while (i < savedPinsList.size() && (i < 6)) {
@@ -448,7 +466,6 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                     i++;
 
                 }
-
 
 
 //                for (Pin p : savedPinsList) {
@@ -484,15 +501,9 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
 //                        // TODO --- MAKE SURE TO ONLY HAVE 6 PINS IN THE DB
 //                    }
 //                }
-
                 DecimalFormat df = new DecimalFormat("#00.00");
                 String totalEstimateText = df.format(totalSavedEstimate);
                 estimateTv.setText(totalEstimateText);
-
-//                if (totalSavedEstimate > budgetNum) {
-//                    float budgetDiff = totalSavedEstimate - budgetNum;
-//                    totalOverBudget += budgetDiff;
-//
 
                 if (totalOverBudget > 0) {
                     String budgetDiffFormatted = df.format(totalOverBudget);
@@ -501,7 +512,36 @@ public class ProjectBoardActivity extends AppCompatActivity implements PinsRvAda
                     overBudgetTv.setVisibility(View.VISIBLE);
                     overBudgetPrice.setVisibility(View.VISIBLE);
                     overBudgetPrice.setText(fullBudgetFormatted);
+                } else {
+                    float newOverBudget = 0.0f;
+                    String budgetDiffFormatted = df.format(newOverBudget);
+                    String fullBudgetFormatted = "$" + budgetDiffFormatted;
+
+                    overBudgetTv.setVisibility(View.GONE);
+                    overBudgetPrice.setVisibility(View.GONE);
+                    overBudgetPrice.setText(fullBudgetFormatted);
                 }
+
+//                if (totalSavedEstimate > budgetNum) {
+//                    float budgetDiff = totalSavedEstimate - budgetNum;
+//                    totalOverBudget += budgetDiff;
+//
+
+
+
+
+////
+//                if ((currentOverBudgetNum >= 0) && (currentPinNum >= currentOverBudgetNum)) {
+//                    float newOverBudget = 0.0f;
+//                    String newOverBudgetText = String.format(Float.toString(newOverBudget), "%.2f");
+//                    overBudgetPrice.setText(newOverBudgetText);
+//                    overBudgetTv.setVisibility(View.GONE);
+//                    overBudgetPrice.setVisibility(View.GONE);
+//
+//                } else if ((currentOverBudgetNum > 0) && (currentPinNum <= currentOverBudgetNum)) {
+//                    float newOverBudget = currentOverBudgetNum - currentPinNum;
+//                    String newOverBudgetText = String.format(Float.toString(newOverBudget), "%.2f");
+//                    overBudgetPrice.setText(newOverBudgetText);
 
 //                }
 
